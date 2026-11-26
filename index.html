@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lịch tập gym 5 buổi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef0f3;--card:#fff;--ink:#16202e;--mute:#5c6778;--line:#d6dbe3;--done:#e6f2ea;
+  --red:#c8372d;--blue:#2a5db0;--yellow:#e3b505;--green:#2e8b57;--grey:#7b8696;
+  --acc:var(--red);--on-acc:#fff;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#12171f;--card:#1b222d;--ink:#e8ecf2;--mute:#9aa5b5;--line:#2c3644;--done:#1b3427;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#12171f;--card:#1b222d;--ink:#e8ecf2;--mute:#9aa5b5;--line:#2c3644;--done:#1b3427;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 56px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;margin:0;line-height:1.05}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-size:clamp(34px,8vw,52px);font-weight:700}
+.sub{color:var(--mute);margin:6px 0 0;max-width:46ch}
+.today{display:inline-block;margin:12px 0 0;padding:8px 11px;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;background:var(--card);color:var(--ink);font-size:13px;font-weight:600}
+#theme{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+nav{display:flex;gap:10px;overflow-x:auto;padding:22px 2px 10px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.plate{flex:0 0 auto;width:62px;height:62px;border-radius:50%;border:0;cursor:pointer;position:relative;background:var(--c);color:var(--oc,#fff);font:700 20px "Barlow Condensed",sans-serif;display:grid;place-items:center;opacity:.5;transition:opacity .15s,transform .15s}
+.plate::before{content:"";position:absolute;inset:7px;border-radius:50%;border:2px solid currentColor;opacity:.45}
+.plate small{position:absolute;bottom:10px;font:600 10px "Be Vietnam Pro",sans-serif;opacity:.9}
+.plate>span{transform:translateY(-6px)}
+.plate[aria-selected="true"]{opacity:1;transform:scale(1.08);box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--c)}
+.plate.food{--c:var(--ink);--oc:var(--bg);width:auto;border-radius:31px;padding:0 22px}
+.plate.food::before{display:none}
+.plate:focus-visible,#theme:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.day-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:18px 0 4px;border-left:8px solid var(--acc);padding-left:12px}
+.day-head h2{font-size:clamp(30px,7vw,42px);font-weight:700}
+.day-date{display:block;margin-top:4px;color:var(--mute);font-size:13px;font-weight:600}
+.prog{font-weight:600;color:var(--mute);font-size:14px;white-space:nowrap}
+.note{color:var(--mute);margin:6px 0 14px;font-size:15px}
+.ex{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:10px;padding:12px 14px;margin:0 0 10px;transition:background .15s}
+.ex.done{background:var(--done)}
+.ex.done .nm{text-decoration:line-through;text-decoration-thickness:1px;color:var(--mute)}
+.ex input{grid-row:1/3;width:26px;height:26px;accent-color:var(--acc);cursor:pointer;margin:0}
+.nm{font-weight:600}
+.tip{grid-column:2/4;color:var(--mute);font-size:14px}
+.sr{font:700 26px "Barlow Condensed",sans-serif;text-align:right;white-space:nowrap}
+.sr span{display:block;font:500 12px "Be Vietnam Pro",sans-serif;color:var(--mute)}
+.vid{grid-column:2/4;font-size:14px;font-weight:600}
+.vid a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:3px;text-underline-offset:3px}
+.vid a:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.video-links{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px}
+.video-toggle,.video-save,.video-remove{border:1px solid var(--line);border-radius:8px;padding:7px 11px;background:var(--bg);color:var(--ink);font:600 13px "Be Vietnam Pro",sans-serif;cursor:pointer}
+.video-toggle{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.video-panel{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.video-panel label{display:block;color:var(--mute);font-size:13px;margin-bottom:5px}
+.video-url{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:400 14px "Be Vietnam Pro",sans-serif}
+.video-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.video-remove{color:var(--red)}
+.video-status{margin:8px 0 0;color:var(--mute);font-size:12px;font-weight:400}
+.video-status.error{color:var(--red);font-weight:600}
+.video-player{margin-top:10px;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden}
+.video-player:empty{display:none}
+.video-player iframe,.video-player video{display:block;width:100%;height:100%;border:0;background:#000}
+.sec{font-size:26px;font-weight:700;margin:22px 0 8px}
+.reset{margin-top:8px;background:none;border:1px solid var(--line);color:var(--mute);border-radius:8px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.calc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0 6px}
+.calc label{display:block;font-size:14px;color:var(--mute);margin-bottom:4px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>div{flex:1 1 150px}
+.calc input,.calc select{width:100%;padding:10px 12px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;text-align:center}
+.macros div{background:var(--bg);border-radius:8px;padding:10px 4px}
+.macros b{display:block;font:700 28px "Barlow Condensed",sans-serif}
+.macros span{font-size:12px;color:var(--mute)}
+.meal{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:0 0 10px;display:grid;grid-template-columns:76px 1fr;gap:4px 14px}
+.meal time{font:700 22px "Barlow Condensed",sans-serif;color:var(--mute)}
+.meal h3{font-size:22px}
+.meal p{margin:2px 0 0;color:var(--mute);font-size:15px}
+.rules{padding-left:20px;margin:0}
+.rules li{margin:0 0 6px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Lịch tập 5 buổi</h1>
+    <p class="sub">Thứ 2 đến thứ 6: ngực, vai, lưng, tay + bụng, chân. Tiến độ được lưu trong tuần hiện tại và tự làm mới khi sang tuần mới.</p>
+    <p class="today" id="today" aria-live="polite"></p>
+  </div>
+  <button id="theme" type="button" aria-label="Đổi giao diện sáng tối">Sáng/Tối</button>
+</header>
+<nav id="tabs" role="tablist" aria-label="Chọn buổi tập"></nav>
+<section id="view"></section>
+</main>
+
+<script>
+var DAYS=[
+{k:"t2",tab:"T2",full:"Thứ 2 · Ngực",c:"--red",oc:"#fff",note:"Khởi động 5 phút (chạy bộ nhẹ, xoay vai) và 1–2 hiệp nhẹ trước khi vào hiệp nặng. Nghỉ 60–90 giây giữa các hiệp.",ex:[
+["Bench press thanh đòn","4","8–10","Hạ thanh chạm nhẹ ngực, không nảy. Bả vai ép sát ghế."],
+["Incline dumbbell press","3","10","Ghế nghiêng 30–45°, đẩy thẳng lên, không khóa khuỷu."],
+["Chest press máy","3","10–12","Giữ nhịp chậm khi hạ xuống (2–3 giây)."],
+["Dumbbell fly","3","12","Khuỷu hơi gập, cảm nhận ngực giãn ra."],
+["Cable crossover","3","12–15","Siết ngực 1 giây ở cuối động tác."],
+["Hít đất","2","Tới mệt","Hiệp cuối để vét sức."]]},
+{k:"t3",tab:"T3",full:"Thứ 3 · Vai",c:"--blue",oc:"#fff",note:"Vai dễ chấn thương: khởi động kỹ, chọn mức tạ kiểm soát được, không vung người.",ex:[
+["Overhead press (tạ đòn hoặc tạ đơn)","4","8–10","Siết bụng, không ưỡn lưng quá mức."],
+["Lateral raise (nâng tạ ngang)","4","12–15","Nâng tới ngang vai, khuỷu dẫn trước cổ tay."],
+["Arnold press","3","10–12","Xoay cổ tay mượt khi đẩy lên."],
+["Reverse fly (vai sau)","4","12–15","Cúi người, ngực hướng xuống, mở tay ngang."],
+["Face pull","3","15","Kéo về phía mặt, khuỷu cao, tốt cho tư thế vai."],
+["Shrug (nhún vai)","3","12","Nhún thẳng lên, không xoay vai."]]},
+{k:"t4",tab:"T4",full:"Thứ 4 · Lưng",c:"--yellow",oc:"#16202e",note:"Đây là buổi nặng nhất với cột sống. Giữ lưng thẳng, nếu đau lưng dưới hãy giảm tạ hoặc thay deadlift bằng hyperextension.",ex:[
+["Deadlift","4","5–6","Thanh sát ống chân, lưng trung tính, đẩy sàn bằng chân."],
+["Lat pulldown (kéo xà rộng)","4","10","Kéo về xương đòn, ép bả vai xuống."],
+["Barbell row","4","8–10","Thân người ~45°, kéo về phía bụng."],
+["Seated cable row","3","10–12","Siết bả vai ở cuối động tác 1 giây."],
+["Dumbbell row một tay","3","10","Mỗi bên, không xoay thân."],
+["Straight-arm pulldown","3","12","Tay gần thẳng, cảm nhận cơ xô."]]},
+{k:"t5",tab:"T5",full:"Thứ 5 · Tay + Bụng",c:"--green",oc:"#fff",note:"Tay trước và tay sau xen kẽ nhau để nghỉ nhanh hơn. Bụng tập cuối buổi.",ex:[
+["Barbell curl","3","10","Khuỷu cố định sát thân."],
+["Skull crusher","3","10","Hạ về trán, khuỷu hướng lên trần."],
+["Hammer curl","3","12","Cầm tạ như cầm búa, tập cả cẳng tay."],
+["Triceps pushdown (dây cáp)","3","12","Duỗi thẳng tay, khuỷu không dạt ra."],
+["Overhead triceps extension","3","12","Khuỷu hướng lên, giãn hết đầu dài tay sau."],
+["Hanging knee raise","3","12–15","Cuộn xương chậu, đừng đung đưa."],
+["Cable crunch","3","15","Gập từ bụng, không kéo bằng tay."],
+["Plank","3","45–60 giây","Người thẳng một đường, siết mông và bụng."],
+["Russian twist","3","20","Mỗi bên tính 1 lần."]]},
+{k:"t6",tab:"T6",full:"Thứ 6 · Chân",c:"--grey",oc:"#fff",note:"Buổi mệt nhất tuần, nên ăn đủ carb trước buổi tập. Khởi động hông và mắt cá kỹ.",ex:[
+["Squat","4","8–10","Gối theo hướng mũi chân, hạ tối thiểu song song sàn."],
+["Romanian deadlift","3","10","Đẩy hông ra sau, cảm nhận đùi sau căng."],
+["Leg press","3","12","Không khóa gối khi đẩy hết."],
+["Walking lunge","3","12 mỗi chân","Bước dài vừa phải, thân người thẳng."],
+["Leg curl","3","12","Siết đùi sau, hạ chậm."],
+["Leg extension","3","12–15","Dừng 1 giây ở đỉnh."],
+["Calf raise (nhón bắp chuột)","4","15","Xuống sâu, lên cao hết cỡ."]]}
+];
+var MEALS=[
+["06:30","Bữa sáng","3 trứng (luộc hoặc ốp la), 60 g yến mạch hoặc 2 lát bánh mì nguyên cám, 1 quả chuối."],
+["09:30","Bữa phụ","1 hũ sữa chua không đường hoặc 1 ly sữa tươi không đường, một nắm hạt (hạnh nhân, óc chó)."],
+["12:00","Bữa trưa","1 chén cơm (gạo lứt hoặc gạo trắng), 150–200 g ức gà, thịt bò nạc hoặc cá, rau luộc hoặc xào ít dầu."],
+["16:00","Trước tập (1–1,5 giờ)","1 củ khoai lang vừa hoặc 1 quả chuối kèm 1 muỗng bơ đậu phộng. Uống đủ nước."],
+["18:30","Sau tập","Whey 1 muỗng hoặc 3–4 trứng luộc / 150 g ức gà, kèm 1 chén cơm để nạp lại glycogen."],
+["20:00","Bữa tối","1 chén cơm nhỏ, 150 g cá hoặc thịt nạc, canh rau, thêm rau xanh."],
+["22:00","Trước ngủ (nếu đói)","Sữa chua Hy Lạp, phô mai tươi hoặc 1 ly sữa không đường."]
+];
+var RULES=[
+"Đạm: khoảng 1,6–2,2 g mỗi kg cân nặng mỗi ngày, chia đều các bữa.",
+"Uống 2,5–3 lít nước mỗi ngày, thêm nếu ra nhiều mồ hôi.",
+"Ngủ 7–9 giờ. Cơ phát triển lúc nghỉ chứ không phải lúc tập.",
+"Hạn chế nước ngọt, đồ chiên rán và rượu bia, nhất là khi muốn giảm mỡ.",
+"Tăng tạ từ từ: khi làm đủ số hiệp ở mức rep cao nhất, tuần sau tăng 2–5% mức tạ.",
+"Thứ 7, chủ nhật nghỉ hoặc đi bộ nhẹ, vẫn giữ đủ lượng đạm."
+];
+function localDateKey(date){
+  var y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");
+  return y+"-"+m+"-"+d;
+}
+function weekStart(date){
+  var d=new Date(date);d.setHours(12,0,0,0);
+  var day=d.getDay();d.setDate(d.getDate()+(day===0?-6:1-day));return d;
+}
+function dayDate(key){
+  var index=parseInt(key.slice(1),10)-2,d=weekStart(new Date());d.setDate(d.getDate()+index);return d;
+}
+function shortDate(date){return new Intl.DateTimeFormat("vi-VN",{day:"2-digit",month:"2-digit"}).format(date)}
+function fullDate(date){return new Intl.DateTimeFormat("vi-VN",{weekday:"long",day:"2-digit",month:"2-digit",year:"numeric"}).format(date)}
+
+var KEY="gym-plan-v1",state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function ensureCurrentWeek(){
+  var current=localDateKey(weekStart(new Date())),changed=false;
+  if(state.weekKey&&state.weekKey!==current){
+    DAYS.forEach(function(d){delete state[d.k]});changed=true;
+  }
+  if(state.weekKey!==current){state.weekKey=current;changed=true}
+  if(changed)save();
+}
+ensureCurrentWeek();
+var tabs=document.getElementById("tabs"),view=document.getElementById("view"),today=document.getElementById("today"),cur="t2";
+
+function renderToday(){
+  var now=new Date(),day=now.getDay(),message=fullDate(now);
+  if(day>=1&&day<=5)message+=" · Hôm nay tập "+DAYS[day-1].full.split(" · ")[1];
+  else message+=" · Hôm nay nghỉ hoặc vận động nhẹ";
+  today.textContent=message+" · Lịch tự reset mỗi Thứ 2";
+}
+
+function renderTabs(){
+  tabs.innerHTML="";
+  DAYS.forEach(function(d){
+    var b=document.createElement("button");b.type="button";b.className="plate";b.role="tab";
+    b.style.setProperty("--c","var("+d.c+")");b.style.setProperty("--oc",d.oc);
+    b.setAttribute("aria-selected",cur===d.k);b.setAttribute("aria-label",d.full);
+    b.innerHTML="<span>"+d.tab+"</span><small>"+shortDate(dayDate(d.k))+"</small>";
+    b.onclick=function(){cur=d.k;go()};tabs.appendChild(b);
+  });
+  var f=document.createElement("button");f.type="button";f.className="plate food";f.role="tab";
+  f.textContent="Ăn uống";f.setAttribute("aria-selected",cur==="food");f.onclick=function(){cur="food";go()};
+  tabs.appendChild(f);
+}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+
+function parseVideoUrl(raw){
+  var u;
+  try{u=new URL(String(raw||"").trim())}catch(e){return null}
+  if(u.protocol!=="https:"&&u.protocol!=="http:")return null;
+  var host=u.hostname.toLowerCase().replace(/^www\./,"");
+  var id="";
+  if(host==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0]||"";
+  else if(host==="youtube.com"||host==="m.youtube.com"||host==="music.youtube.com"){
+    if(u.pathname==="/watch")id=u.searchParams.get("v")||"";
+    else if(/^\/(shorts|embed)\//.test(u.pathname))id=u.pathname.split("/")[2]||"";
+  }
+  if(id&&/^[A-Za-z0-9_-]{6,20}$/.test(id)){
+    return{type:"iframe",src:"https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id),name:"YouTube"};
+  }
+  if(host==="vimeo.com"||host==="player.vimeo.com"){
+    var parts=u.pathname.split("/").filter(Boolean),vimeoId="";
+    parts.forEach(function(p){if(/^\d+$/.test(p))vimeoId=p});
+    if(vimeoId)return{type:"iframe",src:"https://player.vimeo.com/video/"+vimeoId,name:"Vimeo"};
+  }
+  if(/\.(mp4|webm|ogg)$/i.test(u.pathname))return{type:"video",src:u.href,name:"video"};
+  return null;
+}
+
+function showVideo(mount,raw,status){
+  var info=parseVideoUrl(raw);mount.innerHTML="";
+  if(!info){
+    status.textContent="Link chưa được hỗ trợ. Hãy dùng link video YouTube, Vimeo, MP4, WebM hoặc OGG.";
+    status.classList.add("error");return false;
+  }
+  var player;
+  if(info.type==="iframe"){
+    player=document.createElement("iframe");player.src=info.src;player.title="Video hướng dẫn bài tập trên "+info.name;
+    player.loading="lazy";player.referrerPolicy="strict-origin-when-cross-origin";
+    player.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    player.setAttribute("allowfullscreen","");
+  }else{
+    player=document.createElement("video");player.src=info.src;player.controls=true;player.preload="metadata";
+    player.setAttribute("playsinline","");
+  }
+  mount.appendChild(player);status.textContent="Đã nhúng video. Link này được lưu trên trình duyệt của bạn.";
+  status.classList.remove("error");return true;
+}
+
+function renderDay(d){
+  var done=state[d.k]||{},n=d.ex.length,c=0;
+  d.ex.forEach(function(_,i){if(done[i])c++});
+  var actual=dayDate(d.k);
+  var h='<div class="day-head"><div><h2>'+esc(d.full)+'</h2><time class="day-date" datetime="'+localDateKey(actual)+'">'+esc(fullDate(actual))+'</time></div><span class="prog" id="prog">'+c+'/'+n+' xong</span></div>';
+  h+='<p class="note">'+esc(d.note)+'</p>';
+  d.ex.forEach(function(e,i){
+    var videoKey=d.k+"-"+i,hasVideo=!!(state.videos&&state.videos[videoKey]);
+    h+='<div class="ex'+(done[i]?' done':'')+'"><input type="checkbox" data-i="'+i+'" aria-label="Đánh dấu hoàn thành: '+esc(e[0])+'"'+(done[i]?' checked':'')+'>'+
+    '<span class="nm">'+esc(e[0])+'</span><span class="sr">'+esc(e[1])+' × '+esc(e[2])+'<span>hiệp × lần</span></span>'+
+    '<span class="tip">'+esc(e[3])+'</span>'+
+    '<div class="vid video-box" data-key="'+videoKey+'"><div class="video-links">'+
+    '<button class="video-toggle" type="button" aria-expanded="false">'+(hasVideo?'Mở video':'Thêm video')+'</button>'+
+    '<a href="https://www.youtube.com/results?search_query='+encodeURIComponent(e[0].replace(/\s*\(.*\)/,'')+' hướng dẫn kỹ thuật đúng')+'" target="_blank" rel="noopener noreferrer">Tìm video trên YouTube</a></div>'+
+    '<div class="video-panel" hidden><label>Link video hướng dẫn</label><input class="video-url" type="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=...">'+
+    '<div class="video-actions"><button class="video-save" type="button">Nhúng video</button><button class="video-remove" type="button">Xóa video</button></div>'+
+    '<p class="video-status">Hỗ trợ YouTube, YouTube Shorts, Vimeo và link trực tiếp MP4/WebM/OGG.</p><div class="video-player"></div></div></div></div>';
+  });
+  h+='<button class="reset" type="button" id="rs">Làm lại buổi này</button>';
+  h+='<h2 class="sec">Gợi ý ăn trong ngày tập</h2><p class="note">Xem tab Ăn uống để có thực đơn đầy đủ và tính lượng calo theo cân nặng của bạn.</p>';
+  view.innerHTML=h;
+  var root=document.documentElement.style;root.setProperty("--acc","var("+d.c+")");
+  view.querySelectorAll("input[type=checkbox]").forEach(function(cb){
+    cb.onchange=function(){
+      state[d.k]=state[d.k]||{};state[d.k][cb.dataset.i]=cb.checked;save();
+      cb.closest(".ex").classList.toggle("done",cb.checked);
+      var x=0;d.ex.forEach(function(_,i){if(state[d.k][i])x++});
+      document.getElementById("prog").textContent=x+"/"+n+" xong";
+    };
+  });
+  view.querySelectorAll(".video-box").forEach(function(box){
+    var key=box.dataset.key,panel=box.querySelector(".video-panel"),toggle=box.querySelector(".video-toggle");
+    var input=box.querySelector(".video-url"),saveBtn=box.querySelector(".video-save"),removeBtn=box.querySelector(".video-remove");
+    var status=box.querySelector(".video-status"),mount=box.querySelector(".video-player");
+    var saved=state.videos&&state.videos[key]||"";input.value=saved;removeBtn.hidden=!saved;
+    toggle.onclick=function(){
+      var opening=panel.hidden;panel.hidden=!opening;toggle.setAttribute("aria-expanded",opening);
+      toggle.textContent=opening?"Đóng video":(saved?"Mở video":"Thêm video");
+      if(opening&&saved&&!mount.firstChild)showVideo(mount,saved,status);
+      if(opening)input.focus();
+    };
+    saveBtn.onclick=function(){
+      var value=input.value.trim();
+      if(!showVideo(mount,value,status))return;
+      state.videos=state.videos||{};state.videos[key]=value;saved=value;save();
+      removeBtn.hidden=false;toggle.textContent="Đóng video";
+    };
+    removeBtn.onclick=function(){
+      if(state.videos)delete state.videos[key];saved="";input.value="";mount.innerHTML="";removeBtn.hidden=true;save();
+      status.textContent="Đã xóa video khỏi bài tập này.";status.classList.remove("error");toggle.textContent="Đóng video";input.focus();
+    };
+  });
+  document.getElementById("rs").onclick=function(){state[d.k]={};save();renderDay(d)};
+}
+
+function renderFood(){
+  var h='<div class="day-head" style="border-color:var(--ink)"><h2>Chế độ ăn uống</h2></div>';
+  h+='<p class="note">Nhập cân nặng và mục tiêu để có con số tham khảo mỗi ngày. Đây là ước tính chung, nên điều chỉnh sau 2–3 tuần theo cân nặng thực tế.</p>';
+  h+='<div class="calc"><div class="row"><div><label for="w">Cân nặng (kg)</label><input id="w" type="number" min="35" max="200" value="65" inputmode="decimal"></div>'+
+  '<div><label for="g">Mục tiêu</label><select id="g"><option value="38">Tăng cơ</option><option value="33" selected>Giữ cân, tăng sức mạnh</option><option value="28">Giảm mỡ</option></select></div></div>'+
+  '<div class="macros"><div><b id="kc">0</b><span>kcal</span></div><div><b id="pr">0</b><span>đạm (g)</span></div><div><b id="cb">0</b><span>tinh bột (g)</span></div><div><b id="ft">0</b><span>béo (g)</span></div></div></div>';
+  h+='<h2 class="sec">Thực đơn mẫu một ngày</h2>';
+  MEALS.forEach(function(m){h+='<div class="meal"><time>'+m[0]+'</time><div><h3>'+esc(m[1])+'</h3><p>'+esc(m[2])+'</p></div></div>'});
+  h+='<p class="note">Ngày nghỉ: giữ nguyên các bữa chính, bỏ bữa trước tập và sau tập.</p>';
+  h+='<h2 class="sec">Nguyên tắc cần nhớ</h2><ul class="rules">';
+  RULES.forEach(function(r){h+='<li>'+esc(r)+'</li>'});
+  h+='</ul>';
+  view.innerHTML=h;
+  document.documentElement.style.setProperty("--acc","var(--ink)");
+  var w=document.getElementById("w"),g=document.getElementById("g");
+  function calc(){
+    var kg=parseFloat(w.value)||0,kc=Math.round(kg*parseFloat(g.value)),p=Math.round(kg*2),f=Math.round(kg*0.9),c=Math.max(0,Math.round((kc-p*4-f*9)/4));
+    document.getElementById("kc").textContent=kc;document.getElementById("pr").textContent=p;
+    document.getElementById("cb").textContent=c;document.getElementById("ft").textContent=f;
+    try{localStorage.setItem(KEY+"-w",w.value)}catch(e){}
+  }
+  try{var sw=localStorage.getItem(KEY+"-w");if(sw)w.value=sw}catch(e){}
+  w.oninput=calc;g.onchange=calc;calc();
+}
+
+function go(){
+  renderTabs();
+  if(cur==="food")renderFood();
+  else renderDay(DAYS.filter(function(d){return d.k===cur})[0]);
+}
+var js=new Date().getDay();
+if(js>=1&&js<=5)cur=DAYS[js-1].k;
+renderToday();go();
+
+var openDateKey=localDateKey(new Date());
+function refreshDateIfNeeded(){
+  var now=new Date(),nextKey=localDateKey(now);
+  if(nextKey===openDateKey)return;
+  openDateKey=nextKey;ensureCurrentWeek();
+  var day=now.getDay();if(day>=1&&day<=5)cur=DAYS[day-1].k;
+  renderToday();go();
+}
+setInterval(refreshDateIfNeeded,60000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)refreshDateIfNeeded()});
+
+var th=document.getElementById("theme");
+th.onclick=function(){
+  var r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+};
+</script>
+</body>
+</html>
